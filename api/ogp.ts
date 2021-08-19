@@ -8,9 +8,35 @@ const { ChartJSNodeCanvas } = require('chartjs-node-canvas');
 const canvas = require('canvas'); // point
 import { VercelRequest, VercelResponse } from '@vercel/node';
 
+const plugin = {
+    id: 'custom_canvas_background_color',
+    beforeDraw: (chart) => {
+        const ctx = chart.canvas.getContext('2d');
+        ctx.save();
+        ctx.globalCompositeOperation = 'destination-over';
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, chart.width, chart.height);
+        ctx.restore();
+    }
+};
+
+const validata = (data: Array<Number>): Boolean => {
+    let isAllNumber = true;
+    data.forEach(x => {
+        isAllNumber = (typeof x === 'number') && isAllNumber;
+    });
+    return (data.length === 11) && isAllNumber;
+}
+
 export default async (req: VercelRequest, res: VercelResponse) => {
     const width = 1200;
     const height = 630;
+    const query: String = new String(req.query.data);
+    const data = query.split(',').map(x => Number(x));
+
+    if (validata(data) === false) {
+        res.end("validata error");
+    }
     
     const chartJSNodeCanvas = new ChartJSNodeCanvas({ width, height, chartCallback: (ChartJS) => {
         ChartJS.defaults.font.family = 'NotoSansJP-Black';
@@ -21,27 +47,23 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     const configuration = {
         type: 'bar',
         data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            labels: ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'D', 'D-', 'F'],
             datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
+                label: '人数',
+                data: data,
                 backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
+                    'rgba(33, 150, 243, 1)',
+                    'rgba(33, 150, 243, 1)',
+                    'rgba(33, 150, 243, 1)',
+                    'rgba(187, 222, 251, 1)',
+                    'rgba(187, 222, 251, 1)',
+                    'rgba(187, 222, 251, 1)',
+                    'rgba(255, 152, 0, 1)',
+                    'rgba(255, 152, 0, 1)',
+                    'rgba(244, 67, 54, 1)',
+                    'rgba(244, 67, 54, 1)',
+                    'rgba(244, 67, 54, 1)',
                 ],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
             }]
         },
         options: {
@@ -53,7 +75,8 @@ export default async (req: VercelRequest, res: VercelResponse) => {
                     }
                 }]
             }
-        }
+        },
+        plugins: [plugin],
     };
     
     const buffer = await chartJSNodeCanvas.renderToBuffer(configuration);
