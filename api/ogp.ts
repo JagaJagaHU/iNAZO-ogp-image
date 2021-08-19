@@ -20,7 +20,7 @@ const plugin = {
     }
 };
 
-const validata = (data: Array<Number>): Boolean => {
+const validataData = (data: Array<Number>): Boolean => {
     let isAllNumber = true;
     data.forEach(x => {
         isAllNumber = (typeof x === 'number') && isAllNumber;
@@ -31,14 +31,20 @@ const validata = (data: Array<Number>): Boolean => {
 export default async (req: VercelRequest, res: VercelResponse) => {
     const width = 1200;
     const height = 630;
-    const query: String = new String(req.query.data);
-    const data = query.split(',').map(x => Number(x));
+    const queryData: String = new String(req.query.data);
+    const data = queryData.split(',').map(x => Number(x));
+    const title = req.query.title || '';
+    const titleFontSize = title.length > 50 ? 24 : 36;
+    const subtitle = req.query.subtitle || '';
+    const subtitleFontSize = subtitle.length > 50 ? 24 : 36;
 
-    if (validata(data) === false) {
-        res.end("validata error");
+    if (validataData(data) === false || subtitle === '' || title === '') {
+        res.send("validata error");
+        return;
     }
     
     const chartJSNodeCanvas = new ChartJSNodeCanvas({ width, height, chartCallback: (ChartJS) => {
+        ChartJS.defaults.font.size = 24;
         ChartJS.defaults.font.family = 'NotoSansJP-Black';
     } });
 
@@ -49,7 +55,6 @@ export default async (req: VercelRequest, res: VercelResponse) => {
         data: {
             labels: ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'D', 'D-', 'F'],
             datasets: [{
-                label: '人数',
                 data: data,
                 backgroundColor: [
                     'rgba(33, 150, 243, 1)',
@@ -74,7 +79,33 @@ export default async (req: VercelRequest, res: VercelResponse) => {
                         callback: (value) => '$' + value
                     }
                 }]
-            }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: title,
+                    font: {
+                        size: titleFontSize
+                    },
+                    padding: {
+                        top: 30,
+                        bottom: 10,
+                    }
+                },
+                subtitle: {
+                    display: true,
+                    text: subtitle,
+                    font: {
+                        size: subtitleFontSize,
+                    },
+                    padding: {
+                        bottom: 20
+                    }
+                },
+                legend: {
+                    display: false,
+                },
+            }    
         },
         plugins: [plugin],
     };
