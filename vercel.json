@@ -1,0 +1,9 @@
+{
+    "version": 2,
+    "routes": [{ "src": "/.*", "dest": "/api/ogp" }],
+    "functions": {
+        "api/ogp.ts": {
+            "includeFiles": "fonts/**"
+        }
+    }
+}
