@@ -72,13 +72,21 @@ export default async (req: VercelRequest, res: VercelResponse) => {
             }]
         },
         options: {
+            layout: {
+                padding: {
+                    top: 10,
+                    right: 30,
+                    bottom: 30,
+                    left: 30,
+                }
+            },
             scales: {
-                yAxes: [{
+                yAxis: {
                     ticks: {
                         beginAtZero: true,
-                        callback: (value) => '$' + value
+                        precision: 0,
                     }
-                }]
+                }
             },
             plugins: {
                 title: {
