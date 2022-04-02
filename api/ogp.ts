@@ -20,7 +20,7 @@ const plugin = {
     }
 };
 
-const validataData = (data: Array<Number>): Boolean => {
+const validateData = (data: Array<Number>): Boolean => {
     let isAllNumber = true;
     data.forEach(x => {
         isAllNumber = (typeof x === 'number') && isAllNumber;
@@ -29,8 +29,9 @@ const validataData = (data: Array<Number>): Boolean => {
 }
 
 export default async (req: VercelRequest, res: VercelResponse) => {
-    const width = 1200;
-    const height = 630;
+
+    const width = Number(req.query.width) || 1200;
+    const height = Number(req.query.height) || 630;
     const queryData: String = new String(req.query.data);
     const data = queryData.split(',').map(x => Number(x));
     const title = req.query.title || '';
@@ -38,8 +39,13 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     const subtitle = req.query.subtitle || '';
     const subtitleFontSize = subtitle.length > 50 ? 24 : 36;
 
-    if (validataData(data) === false || subtitle === '' || title === '') {
-        res.send("validata error");
+    if (validateData(data) === false || subtitle === '' || title === '') {
+        res.status(400).send("validate error");
+        return;
+    }
+
+    if (width < 100 || 2000 < width || height < 100 || 2000 < height) {
+        res.status(400).send("need [100px <= width and height <= 2000px]");
         return;
     }
     
