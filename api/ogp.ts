@@ -39,7 +39,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     const subtitle = req.query.subtitle || '';
     const subtitleFontSize = subtitle.length > 50 ? 24 : 36;
 
-    if (validateData(data) === false || subtitle === '' || title === '') {
+    if (validateData(data) === false || title === '') {
         res.status(400).send("validate error");
         return;
     }
