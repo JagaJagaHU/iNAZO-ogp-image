@@ -39,12 +39,12 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     const subtitle = req.query.subtitle || '';
     const subtitleFontSize = subtitle.length > 50 ? 24 : 36;
 
-    if (validateData(data) === false || title === '') {
+    if (validateData(data) === false) {
         res.status(400).send("validate error");
         return;
     }
 
-    if (width < 100 || 2000 < width || height < 100 || 2000 < height) {
+    if (width < 600 || 2000 < width || height < 600 || 2000 < height) {
         res.status(400).send("need [100px <= width and height <= 2000px]");
         return;
     }
@@ -107,7 +107,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
                     }
                 },
                 subtitle: {
-                    display: true,
+                    display: subtitle !== '', // subtitleがなかったら表示しない
                     text: subtitle,
                     font: {
                         size: subtitleFontSize,
