@@ -6,6 +6,8 @@
     "author": "karintou8710 <karintou8710@gmail.com>",
     "license": "MIT",
     "scripts": {
+        "lint": "eslint api/*.ts",
+        "format": "prettier --write api/*.ts",
         "vercel-build": "yum --skip-broken install libuuid-devel libmount-devel && cp /lib64/{libuuid,libmount,libblkid}.so.1 node_modules/canvas/build/Release/"
     },
     "dependencies": {
@@ -14,6 +16,15 @@
         "chartjs-node-canvas": "^3.2.0"
     },
     "devDependencies": {
-        "@vercel/node": "^1.12.1"
+        "@typescript-eslint/eslint-plugin": "^5.17.0",
+        "@typescript-eslint/parser": "^5.17.0",
+        "@vercel/node": "^1.12.1",
+        "eslint": "^7.32.0",
+        "eslint-config-prettier": "^8.5.0",
+        "eslint-config-standard": "^16.0.3",
+        "eslint-plugin-import": "^2.25.4",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-promise": "^5.2.0",
+        "prettier": "^2.6.2"
     }
 }
